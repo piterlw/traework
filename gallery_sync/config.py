@@ -1,9 +1,19 @@
 """配置加载模块"""
 
 import os
-import yaml
 from dataclasses import dataclass, field
 from typing import List, Dict, Any
+
+try:
+    import yaml
+except ImportError:
+    sys_exit_msg = (
+        "缺少依赖 PyYAML，请先安装：\n"
+        "  pip install -r requirements.txt\n"
+        "或单独安装：\n"
+        "  pip install pyyaml"
+    )
+    raise SystemExit(sys_exit_msg)
 
 
 @dataclass
