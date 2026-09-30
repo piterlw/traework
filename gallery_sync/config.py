@@ -56,15 +56,18 @@ def load_config(path: str = "config.yaml") -> Config:
     with open(path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
 
+    # 以配置文件所在目录为基准，将相对路径转为绝对路径
+    base_dir = os.path.dirname(os.path.abspath(path))
+
     cfg.scan_dirs = data.get("scan_dirs", cfg.scan_dirs)
     cfg.image_extensions = [
         e.lower() for e in data.get("image_extensions", cfg.image_extensions)
     ]
-    cfg.database = data.get("database", cfg.database)
-    cfg.thumbnail_dir = data.get("thumbnail_dir", cfg.thumbnail_dir)
+    cfg.database = _abs(base_dir, data.get("database", cfg.database))
+    cfg.thumbnail_dir = _abs(base_dir, data.get("thumbnail_dir", cfg.thumbnail_dir))
     ts = data.get("thumbnail_size", list(cfg.thumbnail_size))
     cfg.thumbnail_size = (int(ts[0]), int(ts[1]))
-    cfg.log_file = data.get("log_file", cfg.log_file)
+    cfg.log_file = _abs(base_dir, data.get("log_file", cfg.log_file))
     cfg.log_level = data.get("log_level", cfg.log_level)
 
     web_data = data.get("web", {})
@@ -84,6 +87,13 @@ def load_config(path: str = "config.yaml") -> Config:
     )
 
     return cfg
+
+
+def _abs(base_dir: str, p: str) -> str:
+    """若 p 是相对路径，拼到 base_dir 下；否则原样返回。"""
+    if os.path.isabs(p):
+        return p
+    return os.path.join(base_dir, p)
 
 
 def ensure_dirs(cfg: Config):

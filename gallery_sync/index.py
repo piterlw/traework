@@ -32,7 +32,8 @@ CREATE INDEX IF NOT EXISTS idx_images_taken ON images(taken_at);
 class ImageIndex:
     def __init__(self, db_path: str):
         os.makedirs(os.path.dirname(os.path.abspath(db_path)) or ".", exist_ok=True)
-        self.conn = sqlite3.connect(db_path)
+        # check_same_thread=False：Flask 多线程模式下允许跨线程只读访问
+        self.conn = sqlite3.connect(db_path, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         self.conn.executescript(SCHEMA)
         self.conn.commit()
