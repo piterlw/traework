@@ -4,6 +4,7 @@
 
 ## 功能
 
+- **自动检索图片目录**：一键扫描系统常见图片目录，或全盘搜索含图片的文件夹
 - 扫描本地指定目录下的图片，建立 SQLite 索引
 - 自动生成缩略图，加快浏览速度
 - Web 画廊：浏览器中按文件夹浏览、点击查看大图
@@ -14,12 +15,43 @@
 
 ```bash
 pip install -r requirements.txt
+
+# 方式一：自动检索图片目录并写入配置（推荐首次使用）
+python main.py discover --write
+
+# 方式二：手动配置
 cp config.example.yaml config.yaml
 # 编辑 config.yaml，填写 scan_dirs
 
 python main.py scan     # 扫描并建立索引
 python main.py serve    # 启动 Web 画廊，访问 http://localhost:8080
 ```
+
+## 自动检索图片目录
+
+```bash
+# 快速模式：只扫描系统常见图片目录（~/Pictures、~/Downloads 等）
+python main.py discover
+
+# 全盘搜索：从指定根目录查找含 >= N 张图片的文件夹
+python main.py discover --root / --min-images 10
+
+# 自动写入 config.yaml（合并现有目录，去重）
+python main.py discover --root /home --min-images 5 --write
+
+# 覆盖现有 scan_dirs（不合并）
+python main.py discover --root D:\\ --min-images 1 --write --no-merge
+```
+
+参数说明：
+
+| 参数 | 说明 |
+|------|------|
+| `--root <路径>` | 全盘搜索的根目录；不指定则只扫系统常见目录 |
+| `--min-images <N>` | 目录至少包含 N 张图片才计入（默认 1） |
+| `--max-depth <N>` | 全盘搜索的最大递归深度（默认 8） |
+| `--write` | 将发现的目录写入 `config.yaml` 的 `scan_dirs` |
+| `--no-merge` | 覆盖现有 `scan_dirs` 而非合并 |
 
 局域网内其他设备访问：用运行电脑的 IP 代替 localhost（需 `web.host` 设为 `0.0.0.0`）。
 
