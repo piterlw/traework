@@ -1,0 +1,54 @@
+# Personal Gallery Sync — 配置示例
+# 复制为 config.yaml 并按需修改
+
+# 要扫描的本地图片目录（可多个）
+scan_dirs:
+  - "C:/Users/你的用户名/Pictures"
+  - "D:/Photos"
+
+# 支持的图片扩展名
+image_extensions:
+  - ".jpg"
+  - ".jpeg"
+  - ".png"
+  - ".gif"
+  - ".webp"
+  - ".bmp"
+  - ".heic"
+  - ".tiff"
+
+# 数据库与缩略图缓存位置
+database: "gallery.db"
+thumbnail_dir: "thumbs"
+thumbnail_size: [300, 300]
+
+# 日志
+log_file: "logs/gallery.log"
+log_level: "INFO"
+
+# Web 画廊服务（可在局域网内用手机/其他设备访问）
+web:
+  host: "0.0.0.0"
+  port: 8080
+  # 如需访问密码，设置后开启简单鉴权
+  password: ""
+
+# 可选：备份到你自己的云存储（留空则不启用）
+backup:
+  enabled: false
+  # 目标类型：s3 或 webdav
+  type: "s3"
+  # S3 兼容存储（如阿里云 OSS、AWS S3、MinIO）
+  s3:
+    endpoint: "https://s3.amazonaws.com"
+    bucket: "my-gallery-backup"
+    access_key: ""
+    secret_key: ""
+    region: "us-east-1"
+  # WebDAV（如坚果云、Nextcloud）
+  webdav:
+    url: "https://dav.example.com/remote.php/dav/files/user/gallery"
+    username: ""
+    password: ""
+  # 备份时是否加密（AES），留空不加密
+  encryption_password: ""
